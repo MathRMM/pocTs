@@ -5,7 +5,7 @@ const taskRouter = Router()
 
 taskRouter.get('/tasks', findTasks)
 taskRouter.post('/tasks', insertTasks)
-taskRouter.delete('/tasks', deleteTasksC)
+taskRouter.delete('/tasks/:id', deleteTasksC)
 taskRouter.put('/tasks', updateTask)
 
 export default taskRouter

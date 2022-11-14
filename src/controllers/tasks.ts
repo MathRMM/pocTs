@@ -19,10 +19,10 @@ export async function findTasks(req: Request, res: Response) {
 }
 
 export async function insertTasks(req: Request, res: Response) {
-    const newTasks = req.body as Omit<Tasks, 'id' | 'finish'>
+    const newTask = req.body as Omit<Tasks, 'id' | 'finish'>
 
     try {
-        await insert(newTasks)
+        await insert(newTask)
         return res.sendStatus(201)
     } catch (error) {
         console.error(error)
@@ -31,7 +31,7 @@ export async function insertTasks(req: Request, res: Response) {
 }
 
 export async function deleteTasksC(req: Request, res: Response) {
-    const id = Number(req.query.id)
+    const id = Number(req.params.id)
     if(!id) return res.sendStatus(400)
 
     try {
@@ -48,7 +48,7 @@ export async function updateTask(req: Request, res: Response){
 
     try {
         await update(newTasks)
-        return res.send({message: 'updated'})
+        return res.sendStatus(200);
     } catch (error) {
         console.error(error)
         return res.sendStatus(500)
