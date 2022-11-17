@@ -1,51 +1,43 @@
-import { connection } from "../database/db.js";
 import { QueryResult } from "pg"
 import { Tasks } from "../protocols.js";
+import prisma from '../database/db.js';
 
-function findMany(): Promise<QueryResult<Tasks>> {
-    return connection.query(`
-        SELECT 
-            tasks.*,
-            users.name AS "responsible"
-        FROM tasks
-        JOIN users ON users.id = tasks."userId";
-    `)
+function findMany() {
+    return  prisma.tasks.findMany();
 }
 
-function findOne(id : number): Promise<QueryResult<Tasks>> {
-    return connection.query(`
-        SELECT 
-            tasks.*,
-            users.name AS "responsible"
-        FROM tasks
-        JOIN users ON users.id = tasks."userId"
-        WHERE  tasks.id = $1;
-    `, [id])
+function findOne(id : number){
+    return prisma.tasks.findUnique({
+        where:{
+            id,
+        }
+    })
 }
 
-function insert(obj: Omit<Tasks, 'id' | 'finish'>): Promise<QueryResult> {
-    return connection.query(`
-        INSERT INTO tasks (name, day, finish, "userId")
-        VALUES ($1, $2, $3, $4)
-    `, [obj.name, obj.day, false, obj.userId])
+function insert(obj: Omit<Tasks, 'id' | 'finish'>) {
+    return prisma.tasks.create({
+        data:{
+            name:obj.name,
+            userId:obj.userId,
+            day:obj.day,
+            finish:false
+        }
+    })
 }
 
 function deleteTasks(id: number) {
-    return connection.query(`
-        DELETE FROM tasks WHERE id = $1
-    `, [id])
+    return prisma.tasks.delete({
+        where:{
+            id,
+        }
+    })
 }
 
-function update(obj: Tasks): Promise<QueryResult> {
-    return connection.query(`
-        UPDATE tasks
-        SET
-            name = $1,
-            day = $2, 
-            finish = $3, 
-            "userId" = $4
-        WHERE id = $5
-    `, [obj.name, obj.day, obj.finish, obj.userId, obj.id])
+function update(obj: Tasks) {
+    return prisma.tasks.update({
+        where:{ id:obj.id },
+        data:obj
+    })
 }
 
 export {

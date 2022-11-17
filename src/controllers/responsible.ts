@@ -1,4 +1,4 @@
-import { findMany, insert, findOne } from "../repository/responsible.js";
+import { findMany, insert, findOne  } from "../repository/responsible.js";
 import { Request, Response } from "express";
 import { Responsible } from "../protocols.js";
 
@@ -7,11 +7,11 @@ export async function findResponsible(req: Request, res: Response) {
     if(id && Number.isNaN(Number(id))) return res.sendStatus(400)
     try {
         if(id) {
-            const result = (await findOne(Number(id))).rows[0]
+            const result = (await findOne(Number(id)))
             if (!result) return res.sendStatus(404)
             return res.send(result)
         }
-        return res.status(200).send((await findMany()).rows)
+        return res.status(200).send((await findMany()))
     } catch (error) {
         console.error(error)
         return res.sendStatus(500)

@@ -1,24 +1,28 @@
-import { connection } from "../database/db.js";
-import { QueryResult } from "pg"
+
 import { Responsible } from "../protocols.js";
+import prisma from '../database/db.js';
 
-function findMany(): Promise<QueryResult<Responsible>>{
-    return connection.query(`
-        SELECT * FROM users;
-    `)
+function findMany(): Promise<Array<Responsible>> {
+    return prisma.users.findMany();
 }
 
-function findOne(id: number): Promise<QueryResult<Responsible>>{
-    return connection.query(`
-        SELECT * FROM users  WHERE id = $1;
-    `, [id])
+function findOne(id: number): Promise<Responsible>{
+    return prisma.users.findUnique({
+        where:{
+            id,
+        },
+        include:{
+            tasks:true
+        }
+    })
 }
 
-function insert(name: string): Promise<QueryResult>{
-    return connection.query(`
-        INSERT INTO users (name)
-        VALUES ($1)
-    `, [name])
+function insert(name: string){
+    return prisma.users.create({
+        data:{
+            name
+        }
+    })
 }
 
 export {
